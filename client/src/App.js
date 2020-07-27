@@ -9,18 +9,15 @@ const players = ["Henry", "Aaron", "Joe", "Alex", "David", "Peter"];
 
 const App = () => {
   const size = 1.2;
-  const nCards = 54;
+  const nCards = 25;
   const decks = 6;
   const d = 20;
 
   const [cards, setCards] = useState(dealCards(nCards, decks));
   // console.log(cards);
-  const removeCard = (i) => {
-    console.log("removing", i);
-    const newCards = [
-      ...cards.slice(0, i),
-      ...cards.slice(i + 1, cards.length),
-    ];
+  const removeCard = (id) => {
+    console.log("removing", id);
+    const newCards = cards.filter(c => c.id !== id);
     setCards(newCards);
   };
   return (
@@ -32,8 +29,8 @@ const App = () => {
           .sort((a, b) => b.value - a.value)
           .map((c, i) => (
             <Card
-              id={i}
-              key={i}
+              id={c.id}
+              key={c.id}
               suit={c.suit}
               rank={c.rank}
               x={25 + d * i}
