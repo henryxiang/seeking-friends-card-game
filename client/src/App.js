@@ -1,9 +1,13 @@
+import "font-awesome/css/font-awesome.min.css";
 import React, { useState } from "react";
 import Card from "./components/cards/Card";
 import { dealCards } from "./services/card-service";
-import CardHolder from "./components/cards/CardHolder";
+import { Header } from "./components/Header";
+import PlayingTable from "./components/game/PlayingTable";
 
-function App() {
+const players = ["Henry", "Aaron", "Joe", "Alex", "David", "Peter"];
+
+const App = () => {
   const size = 1.2;
   const nCards = 54;
   const decks = 6;
@@ -21,13 +25,8 @@ function App() {
   };
   return (
     <div style={{ position: "relative" }}>
-      <div
-        style={{
-          height: "65vh",
-          borderBottom: "2px solid black",
-          backgroundColor: "palegreen",
-        }}
-      ></div>
+      <Header />
+      <PlayingTable players={players} />
       <div style={{ position: "relative", backgroundColor: "gray" }}>
         {cards
           .sort((a, b) => b.value - a.value)
@@ -46,6 +45,6 @@ function App() {
       </div>
     </div>
   );
-}
+};
 
 export default App;
