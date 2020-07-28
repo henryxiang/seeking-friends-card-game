@@ -5,7 +5,7 @@ import { dealCards } from "./services/card-service";
 import { Header } from "./components/Header";
 import PlayingTable from "./components/game/PlayingTable";
 
-const players = ["Henry", "Aaron", "Joe", "Alex", "David", "Peter"];
+const players = ["Henry", "Aaron", "Joe", "Alex", "David", "Peter", "Jane", "Zoe", "Frank", "Mark"];
 
 const App = () => {
   const size = 1.2;
@@ -24,6 +24,7 @@ const App = () => {
     <div style={{ position: "relative" }}>
       <Header />
       <PlayingTable players={players} />
+      {/** Moving the following code to CardHolder component */}
       <div style={{ position: "relative", backgroundColor: "gray" }}>
         {cards
           .sort((a, b) => b.value - a.value)

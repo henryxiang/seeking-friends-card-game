@@ -25,6 +25,16 @@ const cards = [
   new Card("spade", "j"),
   new Card("spade", "q"),
   new Card("spade", "j"),
+  new Card("spade", "a"),
+  new Card("spade", "10"),
+  new Card("spade", "a"),
+  new Card("spade", "10"),
+  new Card("spade", "k"),
+  new Card("spade", "k"),
+  new Card("spade", "q"),
+  new Card("spade", "j"),
+  new Card("spade", "q"),
+  new Card("spade", "j"),
 ];
 
 class PlayingTable extends Component {
