@@ -1,4 +1,5 @@
 import uuid from "uuid/v4";
+import faker from "faker";
 
 const suits = ["club", "diamond", "heart", "spade"];
 const ranks = [
@@ -32,9 +33,19 @@ export class Player {
   }
 }
 
-export const getPlayers = () => {};
+export const getPlayers = (n = 8) => {
+  if (!players || players.length == 0) {
+    for (let i = 0; i < n; i++) {
+      const name = faker.name.firstName();
+      players.push(new Player(name));
+    }
+  }
+  return players;
+};
 
-export const getLocalPlayer = () => {};
+export const getLocalPlayer = () => {
+  return players[0];
+};
 export class Card {
   constructor(suit, rank) {
     this.id = uuid();

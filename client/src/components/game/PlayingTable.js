@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card } from "../../services/card-service";
+import { Card, getPlayers } from "../../services/card-service";
 import PlayingTableLane from "./PlayingTableLane";
 
 const styles = {
@@ -28,8 +28,17 @@ const cards = [
 ];
 
 class PlayingTable extends Component {
+  state = {
+    players: [],
+  };
+
+  componentDidMount() {
+    const players = getPlayers();
+    this.setState({ players });
+  }
+
   render() {
-    const { players } = this.props;
+    const { players } = this.state;
     return (
       <div style={styles.container}>
         {players.map((p) => (

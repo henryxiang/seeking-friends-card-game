@@ -20,7 +20,8 @@ const styles = {
     lineHeight: "1.5rem",
   },
 };
-export const Header = (props) => {
+
+const Header = (props) => {
   return (
     <div style={styles.container}>
       <div style={styles.logo}></div>
@@ -31,3 +32,5 @@ export const Header = (props) => {
     </div>
   );
 };
+
+export default Header;

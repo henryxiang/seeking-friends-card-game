@@ -24,7 +24,7 @@ export class PlayingTableLane extends Component {
     const { player, cards } = this.props;
     return (
       <div style={styles.container}>
-        <div style={styles.player}>{player}</div>
+        <div style={styles.player}>{player.name}</div>
         <div style={styles.cards}>
           {cards
             .sort((a, b) => b.value - a.value)

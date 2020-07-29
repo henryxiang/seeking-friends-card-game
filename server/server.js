@@ -21,9 +21,10 @@ function processChatMessage(msg) {
 }
 
 function processGameMessage(msg) {
-  console.log(">>> game message:", msg);
-  const response = dao.getAllPlayers();
-  io.emit("game", response);
+  const data = JSON.parse(msg);
+  console.log(">>> incoming data:\n", data);
+  // const response = dao.getAllPlayers();
+  io.emit("game", data);
 }
 
 http.listen(port, function () {
