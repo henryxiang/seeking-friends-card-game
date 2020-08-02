@@ -10,9 +10,6 @@ const styles = {
     justifyContent: "space-around",
     flexGrow: 1,
   },
-  // lane: {
-  //   height: "60vh",
-  // },
 };
 
 class PlayingTable extends Component {

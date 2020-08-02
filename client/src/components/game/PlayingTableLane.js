@@ -7,11 +7,11 @@ const styles = {
     flexDirection: "column",
   },
   player: {
-    height: "50px",
+    height: "60px",
     textAlign: "center",
+    margin: "10px",
   },
   cards: {
-    // height: "60vh",
     display: "flex",
     flexDirection: "column",
     flexWrap: "wrap",
@@ -33,7 +33,7 @@ export class PlayingTableLane extends Component {
                 key={i}
                 suit={c.suit}
                 rank={c.rank}
-                size={0.5}
+                size={0.6}
                 position="static"
               />
             ))}

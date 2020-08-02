@@ -12,6 +12,7 @@ export class Game extends Component {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
+          boxSizing: "border-box",
         }}
       >
         <Header />
