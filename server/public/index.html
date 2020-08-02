@@ -10,30 +10,46 @@
       }
       body {
         font: 13px Helvetica, Arial;
+        display: flex;
+        flex-direction: column;
       }
-      form {
-        background: #000;
+      #form {
         padding: 3px;
-        position: fixed;
-        bottom: 0;
+        height: 15vh;
         width: 100%;
       }
-      form input {
-        border: 0;
+      #form input {
+        display: block;
         padding: 10px;
         width: 90%;
-        margin-right: 0.5%;
+        margin: 5px 20px;
       }
-      form button {
+      #form textarea {
+        padding: 10px;
+        display: block;
+        width: 90%;
+        height: 15vh;
+        margin: 5px 20px;
+      }
+      #form button {
         width: 9%;
         background: rgb(130, 224, 255);
         border: none;
         padding: 10px;
+        margin-left: 20px;
+      }
+      button:hover {
+        cursor: pointer;
+        background: blue;
+        color: white;
       }
       #messages {
         list-style-type: none;
         margin: 0;
         padding: 0;
+        overflow: scroll;
+        height: 70vh;
+        border-bottom: 2px solid black;
       }
       #messages li {
         padding: 5px 10px;
@@ -41,32 +57,53 @@
       #messages li:nth-child(odd) {
         background: #eee;
       }
-      #messages {
-        margin-bottom: 40px;
+      .label {
+        margin: 5px 20px;
       }
     </style>
   </head>
   <body>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
+    <div id="messages"></div>
+    <div id="form">
+      <div class="label">Data:</div>
+      <textarea id="data"></textarea>
+      <div>
+        <button id="send">Send</button>
+        <button id="clear">Clear</button>
+      </div>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="jquery.min.js"></script>
     <script>
       $(function () {
-        var socket = io();
-        $("form").submit(function (event) {
+        var socket = io("", { query: "name=Henry" });
+        console.log("id:", socket.id);
+        socket.on("connect", () => {
+          var msg = { socketId: socket.id };
+          $("#messages").append($("<pre>").text(JSON.stringify(msg, null, 2)));
+          socket.on(socket.id, (msg) => {
+            //const m = JSON.parse(msg);
+            console.log(socket.id, msg.type);
+            $("#messages").append($("<pre>").text(JSON.stringify(msg, null, 2)));  
+          })
+          socket.on("game", function (msg) {
+            //const m = JSON.parse(msg);
+            console.log('game', msg.type);
+            $("#messages").append($("<pre>").text(JSON.stringify(msg, null, 2)));
+            window.scrollTo(0, document.body.scrollHeight);
+          });
+        });
+
+        $("#send").click(function (event) {
           event.preventDefault();
-          console.log($("#m").val());
-          socket.emit("chat message", $("#m").val());
-          $("#m").val("");
+          const data = JSON.parse($("#data").val());
+          /*$("#data").val("");*/
+          console.log('data', data, socket);
+          socket.emit("game", JSON.stringify(data));
           return false;
         });
-        socket.on("chat message", function (msg) {
-          $("#messages").append($("<li>").text(msg));
-          window.scrollTo(0, document.body.scrollHeight);
-        });
+
+        $("#clear").click((event) => $("#messages").text(""));
       });
     </script>
   </body>

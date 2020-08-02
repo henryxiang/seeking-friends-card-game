@@ -1,0 +1,25 @@
+{
+  "name": "seeking-friends-card-game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm-run-all -p dev:*",
+    "dev:client": "node scripts/dev-client.js",
+    "dev:server": "node scripts/dev-server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henryxiang/seeking-friends-card-game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/henryxiang/seeking-friends-card-game/issues"
+  },
+  "homepage": "https://github.com/henryxiang/seeking-friends-card-game#readme",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}

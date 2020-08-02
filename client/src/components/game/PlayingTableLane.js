@@ -11,7 +11,7 @@ const styles = {
     textAlign: "center",
   },
   cards: {
-    height: "60vh",
+    // height: "60vh",
     display: "flex",
     flexDirection: "column",
     flexWrap: "wrap",

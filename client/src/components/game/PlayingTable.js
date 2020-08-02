@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, getPlayers } from "../../services/card-service";
+import socket, { topics } from "../../websocket";
 import PlayingTableLane from "./PlayingTableLane";
 
 const styles = {
@@ -8,52 +8,32 @@ const styles = {
     backgroundColor: "palegreen",
     display: "flex",
     justifyContent: "space-around",
+    flexGrow: 1,
   },
-  lane: {
-    height: "60vh",
-  },
+  // lane: {
+  //   height: "60vh",
+  // },
 };
-
-const cards = [
-  new Card("spade", "a"),
-  new Card("spade", "10"),
-  new Card("spade", "a"),
-  new Card("spade", "10"),
-  new Card("spade", "k"),
-  new Card("spade", "k"),
-  new Card("spade", "q"),
-  new Card("spade", "j"),
-  new Card("spade", "q"),
-  new Card("spade", "j"),
-  new Card("spade", "a"),
-  new Card("spade", "10"),
-  new Card("spade", "a"),
-  new Card("spade", "10"),
-  new Card("spade", "k"),
-  new Card("spade", "k"),
-  new Card("spade", "q"),
-  new Card("spade", "j"),
-  new Card("spade", "q"),
-  new Card("spade", "j"),
-];
 
 class PlayingTable extends Component {
   state = {
     players: [],
   };
 
-  componentDidMount() {
-    const players = getPlayers();
-    this.setState({ players });
-  }
+  componentDidMount = () => {
+    socket.on(topics.statusUpdate, (players) => {
+      this.setState({ players });
+    });
+  };
 
   render() {
-    const { players } = this.state;
     return (
       <div style={styles.container}>
-        {players.map((p) => (
-          <PlayingTableLane player={p} cards={cards} />
-        ))}
+        {this.state.players
+          .sort((a, b) => a.order - b.order)
+          .map((p) => (
+            <PlayingTableLane key={p.id} player={p} cards={p.cardsPlayed} />
+          ))}
       </div>
     );
   }

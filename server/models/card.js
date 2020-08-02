@@ -18,6 +18,8 @@ const ranks = [
 ];
 
 class Card {
+  static suits = suits;
+  static ranks = ranks;
   constructor(suit, rank) {
     this.id = uuid();
     this.suit = suit;

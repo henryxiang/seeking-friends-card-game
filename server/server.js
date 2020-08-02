@@ -1,32 +1,25 @@
+const os = require("os");
 const path = require("path");
 const express = require("express");
 const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
-const dao = require("./services/data-access");
+const Session = require("./models/session");
 
+const env = process.env.NODE_ENV;
 const port = process.env.PORT || 8000;
+const publicPath =
+  env === "development"
+    ? path.join(__dirname, "..", "client", "build")
+    : path.join(__dirname, "public");
 
-app.use(express.static(path.join(__dirname, "public")));
+console.info("ENV: ", env);
+console.info("Public Path: ", publicPath);
+console.info("Port: ", port);
 
-io.on("connection", function (socket) {
-  console.log("socket connected: ", socket.connected);
-  socket.on("chat message", processChatMessage);
-  socket.on("game", processGameMessage);
-});
-
-function processChatMessage(msg) {
-  console.log(">>> incoming message:", msg);
-  io.emit("chat message", msg);
-}
-
-function processGameMessage(msg) {
-  const data = JSON.parse(msg);
-  console.log(">>> incoming data:\n", data);
-  // const response = dao.getAllPlayers();
-  io.emit("game", data);
-}
+app.use(express.static(publicPath));
+new Session(io);
 
 http.listen(port, function () {
-  console.log("listening on *:" + port);
+  console.log(`server started on http://${os.hostname}:${port}`);
 });

@@ -17,34 +17,18 @@
         position: fixed;
         bottom: 0;
         width: 100%;
-        color: white;
       }
       form input {
-        display: block;
         border: 0;
         padding: 10px;
         width: 90%;
-        margin: 5px 20px;
-      }
-      form textarea {
-        border: 0;
-        padding: 10px;
-        display: block;
-        width: 90%;
-        height: 200px;
-        margin: 5px 20px
+        margin-right: 0.5%;
       }
       form button {
         width: 9%;
         background: rgb(130, 224, 255);
         border: none;
         padding: 10px;
-        margin-left: 20px;
-      }
-      button:hover {
-        cursor: pointer;
-        background: blue;
-        color: white;
       }
       #messages {
         list-style-type: none;
@@ -60,43 +44,29 @@
       #messages {
         margin-bottom: 40px;
       }
-      .label {
-        margin: 5px 20px;
-      }
     </style>
   </head>
   <body>
-    <pre id="messages"></pre>
+    <ul id="messages"></ul>
     <form action="">
-      <div class="label">Room: </div>
-      <input id="room" autocomplete="off" />
-      <div class="label">Data:</div>
-      <textarea id="data"></textarea>
-      <div>
-        <button id="send">Send</button>
-        <button id="clear">Clear</button>
-      </div>
+      <input id="m" autocomplete="off" /><button>Send</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="jquery.min.js"></script>
     <script>
       $(function () {
         var socket = io();
-        socket.on("game", function (msg) {
-          $("#messages").text(JSON.stringify(msg, null, 2));
-          /*window.scrollTo(0, document.body.scrollHeight);*/
-        });
-
-        $("#send").click(function (event) {
+        $("form").submit(function (event) {
           event.preventDefault();
-          const room = $("#room").val();
-          const data = $("#data").val();
-          $("#data").val("");
-          socket.emit(room, data);
+          console.log($("#m").val());
+          socket.emit("chat message", $("#m").val());
+          $("#m").val("");
           return false;
         });
-
-        $("#clear").click((event) => $("message").text(""));
+        socket.on("chat message", function (msg) {
+          $("#messages").append($("<li>").text(msg));
+          window.scrollTo(0, document.body.scrollHeight);
+        });
       });
     </script>
   </body>

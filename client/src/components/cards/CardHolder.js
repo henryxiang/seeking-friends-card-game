@@ -1,16 +1,13 @@
 import React, { Component } from "react";
-import { dealCards } from "../../services/card-service";
+import socket, { topics, getClientId } from "../../websocket";
 import Card from "./Card";
 import CardStage from "./CardStage";
 
 const cardSize = 1.2;
-const nCards = 30;
-const nDecks = 6;
-
 export class CardHolder extends Component {
   state = {
     cards: [],
-    stage: [],
+    cardsToPlay: [],
     width: window.innerWidth,
     height: window.innerHeight,
   };
@@ -22,23 +19,30 @@ export class CardHolder extends Component {
   removeCard = (id) => {
     const cards = this.state.cards.filter((c) => c.id !== id);
     const removed = this.state.cards.filter((c) => c.id === id);
-    const { stage } = this.state;
-    stage.push(removed[0]);
-    this.setState({ cards, stage });
+    const { cardsToPlay } = this.state;
+    cardsToPlay.push(removed[0]);
+    this.setState({ cards, cardsToPlay });
   };
 
   play = () => {
-    this.setState({ stage: [] });
+    socket.emit(topics.playCards, {
+      clientId: getClientId(),
+      cards: this.state.cardsToPlay,
+    });
+    this.setState({ cardsToPlay: [] });
   };
 
   undo = () => {
-    const cards = [...this.state.cards, ...this.state.stage];
-    this.setState({ cards, stage: [] });
+    const cards = [...this.state.cards, ...this.state.cardsToPlay];
+    this.setState({ cards, cardsToPlay: [] });
   };
 
   componentDidMount() {
-    const cards = dealCards(nCards, nDecks);
-    this.setState({ cards });
+    const clientId = getClientId();
+    socket.on(clientId, (cards) => {
+      console.log("cards dealt:", cards.length);
+      this.setState({ cards });
+    });
     window.addEventListener("resize", this.updateDimensions);
   }
 
@@ -62,7 +66,11 @@ export class CardHolder extends Component {
     console.log(cards);
     return (
       <div style={styles.container}>
-        <CardStage cards={this.state.stage} play={this.play} undo={this.undo} />
+        <CardStage
+          cards={this.state.cardsToPlay}
+          play={this.play}
+          undo={this.undo}
+        />
         {cards
           .sort((a, b) => b.value - a.value)
           .map((c, i) => (
