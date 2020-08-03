@@ -1,4 +1,3 @@
-const os = require("os");
 const path = require("path");
 const express = require("express");
 const app = express();
@@ -21,5 +20,5 @@ app.use(express.static(publicPath));
 new Session(io);
 
 http.listen(port, function () {
-  console.log(`server started on http://${os.hostname}:${port}`);
+  console.log(`server started on http://localhost:${port}`);
 });

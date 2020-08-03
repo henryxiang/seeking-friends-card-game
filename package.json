@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "init": "npm-run-all -s init:*",
+    "init:client": "node scripts/init-client.js",
+    "init:server": "node scripts/init-server.js",
     "dev": "npm-run-all -p dev:*",
     "dev:client": "node scripts/dev-client.js",
     "dev:server": "node scripts/dev-server.js"

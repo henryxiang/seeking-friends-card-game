@@ -1,15 +1,11 @@
 import React, { Component } from "react";
 import Card from "../cards/Card";
+import Player from "./Player";
 
 const styles = {
   container: {
     display: "flex",
     flexDirection: "column",
-  },
-  player: {
-    height: "60px",
-    textAlign: "center",
-    margin: "10px",
   },
   cards: {
     display: "flex",
@@ -24,7 +20,7 @@ export class PlayingTableLane extends Component {
     const { player, cards } = this.props;
     return (
       <div style={styles.container}>
-        <div style={styles.player}>{player.name}</div>
+        <Player player={player} />
         <div style={styles.cards}>
           {cards
             .sort((a, b) => b.value - a.value)
