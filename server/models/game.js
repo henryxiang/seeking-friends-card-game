@@ -1,5 +1,6 @@
 const Deck = require("./deck");
 const Round = require("./round");
+const Card = require("./card");
 
 class Game {
   constructor(players, nDecks, nHoleCards = 8) {
@@ -8,6 +9,15 @@ class Game {
     this.nHoleCards = nHoleCards;
     this.nPlayers = Object.keys(players).length;
     this.leadPlayer = this.getPlayersInOrder()[0];
+
+    // Todo: fix hard-coded deal
+    this.leadPlayer.isDealer = true;
+    this.leadPlayer.friendCards = [
+      new Card("spade", "a"),
+      new Card("spade", "a"),
+      new Card("heart", "a"),
+    ];
+
     this.deck = new Deck(nDecks);
     this.cardsPerPlayer = this.getCardsPerPlayer();
     this.cardsNotPlayed = this.deck.cards.length - nHoleCards;
@@ -34,6 +44,10 @@ class Game {
   }
   startNewRound() {
     this.clearPlayerCards();
+    if (this.rounds.length > 0) {
+      this.leadPlayer = this.getCurrentRoundWinner();
+    }
+    console.log("start new round:", this.leadPlayer);
     const round = new Round(this.players, this.leadPlayer);
     this.rounds.push(round);
   }
@@ -45,7 +59,8 @@ class Game {
   }
   getCurrentRoundWinner() {
     const playerId = this.getCurrentRound().getWinner();
-    return this.players[playerId];
+    const winner = Object.values(this.players).find((p) => p.id === playerId);
+    return winner;
   }
   getNextPlayer() {
     if (this.isCurrentRoundEnd()) {

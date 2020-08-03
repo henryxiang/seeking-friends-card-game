@@ -6,6 +6,9 @@ import CardStage from "./CardStage";
 const cardSize = 1.2;
 export class CardHolder extends Component {
   state = {
+    playerId: 1,
+    player: { id: 0 },
+    leadingCards: [],
     cards: [],
     cardsToPlay: [],
     width: window.innerWidth,
@@ -17,6 +20,9 @@ export class CardHolder extends Component {
   };
 
   removeCard = (id) => {
+    const { player, playerId } = this.state;
+    console.log("remove card:", playerId, player);
+    if (player.id === playerId && !player.isPlaying) return;
     const cards = this.state.cards.filter((c) => c.id !== id);
     const removed = this.state.cards.filter((c) => c.id === id);
     const { cardsToPlay } = this.state;
@@ -37,11 +43,30 @@ export class CardHolder extends Component {
     this.setState({ cards, cardsToPlay: [] });
   };
 
+  getLocalPlayer = (players) => {
+    const player = players.find((p) => p.id === this.state.playerId);
+    console.log("cardholder player updated:", player);
+    this.setState({ player });
+  };
+
+  getLeadingCards = (players) => {
+    const player = players.find((p) => p.cardsPlayed.length !== 0);
+    if (this.state.leadingCards.length === 0 && player) {
+      this.setState({ leadingCards: player.cardsPlayed });
+    } else if (this.state.leadingCards.length > 0 && !player) {
+      this.setState({ leadingCards: [] });
+    }
+  };
+
   componentDidMount() {
     const clientId = getClientId();
-    socket.on(clientId, (cards) => {
-      console.log("cards dealt:", cards.length);
-      this.setState({ cards });
+    socket.on(clientId, ({ id, cards }) => {
+      console.log("cards dealt:", id, cards.length);
+      this.setState({ playerId: id, cards });
+    });
+    socket.on(topics.statusUpdate, (players) => {
+      this.getLocalPlayer(players);
+      this.getLeadingCards(players);
     });
     window.addEventListener("resize", this.updateDimensions);
   }
@@ -63,7 +88,6 @@ export class CardHolder extends Component {
         height: "220px",
       },
     };
-    console.log(cards);
     return (
       <div style={styles.container}>
         <CardStage

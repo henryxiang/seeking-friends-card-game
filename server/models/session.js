@@ -52,8 +52,8 @@ class Session {
     const { nDecks, nHoleCards } = this.settings;
     const game = new Game(this.players, nDecks, nHoleCards);
     this.games.push(game);
-    this.sendStatusUpdate();
     this.dealCards();
+    this.sendStatusUpdate();
     console.log("start new game:", this.games.length);
   };
   getCurrentGame = () => {
@@ -62,9 +62,10 @@ class Session {
   dealCards = () => {
     const { players } = this;
     for (const clientId in players) {
+      const { id } = players[clientId];
       const cards = this.getCurrentGame().dealCards();
       console.log("deal cards", clientId, cards.length);
-      this.sockets[clientId].emit(clientId, cards);
+      this.sockets[clientId].emit(clientId, { id, cards });
     }
   };
   playCards = ({ clientId, cards }) => {

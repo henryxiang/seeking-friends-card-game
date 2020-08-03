@@ -1,5 +1,6 @@
 import io from "socket.io-client";
 import { uuid } from "uuidv4";
+import ws from "./message-topics";
 
 export const getClientId = () => {
   let clientId = window.localStorage.getItem("sfcg:clientId");
@@ -15,14 +16,7 @@ export const subscribe = (socket, topic, callback) => {
   socket.on(topic, callback);
 };
 
-export const topics = {
-  socketConnect: "connect",
-  signIn: "SignIn",
-  start: "Start",
-  dealCards: "DealCards",
-  statusUpdate: "StatusUpdate",
-  playCards: "PlayCards",
-};
+export const topics = ws.topics;
 
 const socket = io("", { query: { id: getClientId() } });
 export default socket;

@@ -19,6 +19,7 @@ class PlayingTable extends Component {
 
   componentDidMount = () => {
     socket.on(topics.statusUpdate, (players) => {
+      console.log("players updated:", players);
       this.setState({ players });
     });
   };

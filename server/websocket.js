@@ -1,16 +1,5 @@
-const subscribe = (socket, topic, callback) => {
-  socket.on(topic, callback);
-};
-
-const topics = {
-  signIn: "SignIn",
-  start: "Start",
-  dealCards: "DealCards",
-  statusUpdate: "StatusUpdate",
-  playCards: "PlayCards",
-};
+const { topics } = require("../client/src/message-topics");
 
 module.exports = {
   topics,
-  subscribe,
 };

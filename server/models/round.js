@@ -6,26 +6,37 @@ function calculateHandValue(cards) {
 
 class Round {
   constructor(players, leadPlayer) {
-    this.players = Object.values(players)
+    this.players = players;
+    this.playersQueue = Object.values(players)
       .sort((a, b) => a.order - b.order)
       .map((p) => p.id);
     this.setLeadPlayer(leadPlayer);
     this.cardsPlayed = [];
     this.pIndex = 0;
+    this.setNextPlayer();
   }
   setLeadPlayer(player) {
-    while (this.players[0] !== player.id)
-      this.players.push(this.players.shift());
+    while (this.playersQueue[0] !== player.id)
+      this.playersQueue.push(this.playersQueue.shift());
   }
   getNextPlayer() {
-    return this.players[this.pIndex];
+    return this.playersQueue[this.pIndex];
+  }
+  setNextPlayer() {
+    for (const clientId in this.players) {
+      this.players[clientId].isPlaying = false;
+      if (!this.isEnd() && this.players[clientId].id === this.getNextPlayer()) {
+        this.players[clientId].isPlaying = true;
+      }
+    }
   }
   playCards(cards) {
     this.cardsPlayed[this.pIndex] = cards.sort((a, b) => b.value - a.value);
     this.pIndex += 1;
+    this.setNextPlayer();
   }
   isEnd() {
-    return this.pIndex >= this.players.length;
+    return this.pIndex >= this.playersQueue.length;
   }
   getWinner() {
     let iMax = 0;
@@ -37,7 +48,7 @@ class Round {
         iMax = i;
       }
     }
-    return this.players[iMax];
+    return this.playersQueue[iMax];
   }
 }
 
