@@ -1,5 +1,6 @@
 import React, { Component, createRef } from "react";
 import socket, { topics } from "../websocket";
+import labels from "../labels-en";
 
 const styles = {
   modal: {
@@ -95,8 +96,8 @@ export class GameSettings extends Component {
       <div style={styles.modal}>
         <div style={styles.content}>
           <form style={styles.form} onSubmit={this.startGame}>
-            <h3>Game Settings</h3>
-            <div style={styles.label}>Number of Decks</div>
+            <h3>{labels.gameSettings.title}</h3>
+            <div style={styles.label}>{labels.gameSettings.decks}</div>
             <input
               type="number"
               ref={this.deckRef}
@@ -104,7 +105,7 @@ export class GameSettings extends Component {
               defaultValue={this.state.nDecks}
               onChange={this.onInputChange}
             />
-            <div style={styles.label}>Number of Hole Cards</div>
+            <div style={styles.label}>{labels.gameSettings.holeCards}</div>
             <input
               type="number"
               style={styles.input}
@@ -113,10 +114,10 @@ export class GameSettings extends Component {
             />
             <div style={styles.buttonToolBar}>
               <button style={styles.button} onClick={this.startGame}>
-                Let's Play!
+                {labels.gameSettings.playButton}
               </button>
               <button style={styles.button} onClick={this.cancel}>
-                Cancel
+                {labels.gameSettings.cancelButton}
               </button>
             </div>
           </form>

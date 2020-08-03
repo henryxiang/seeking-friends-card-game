@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+import socket, { topics } from "../websocket";
+import labels from "../labels-en";
 import GameSettings from "./GameSettings";
-import AppContext from "../context/app-context";
 
 const styles = {
   container: {
@@ -27,22 +28,52 @@ const styles = {
   },
 };
 
+const suitUnicode = {
+  heart: 9825,
+  diamond: 9826,
+  club: 9827,
+  spade: 9828,
+};
+
+const GameInfo = ({ dealer, trump }) =>
+  !dealer || !trump ? (
+    <span>Game Not Started</span>
+  ) : (
+    <span>
+      {`${labels.header.dealer}: 
+        ${dealer}  |  
+        ${labels.header.trump}: 
+        ${String.fromCharCode(suitUnicode[trump])}`}
+    </span>
+  );
+
 class Header extends Component {
-  static contextType = AppContext;
   state = {
     showSettings: false,
     isGameStarted: false,
+    dealer: null,
+    trump: null,
   };
 
   showSettings = (event) => {
     event.preventDefault();
     this.setState({ showSettings: true });
   };
+
+  componentDidMount() {
+    socket.on(topics.gameInfo, ({ dealer, trump }) => {
+      this.setState({ dealer, trump, showSettings: false });
+    });
+  }
+
   render() {
+    const { dealer, trump } = this.state;
     return (
       <div style={styles.container}>
         <div style={styles.logo}></div>
-        <div style={styles.info}>Game Not Started</div>
+        <div style={styles.info}>
+          <GameInfo dealer={dealer} trump={trump} />
+        </div>
         <div style={styles.control}>
           <i
             style={styles.button}

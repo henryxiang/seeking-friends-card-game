@@ -53,8 +53,15 @@ class Session {
     const game = new Game(this.players, nDecks, nHoleCards);
     this.games.push(game);
     this.dealCards();
-    this.sendStatusUpdate();
+    // this.sendStatusUpdate();
     console.log("start new game:", this.games.length);
+    this.startBidding(game);
+  };
+  startBidding = (game) => {
+    const dealer = game.getDealer();
+    game.trump = "spade";
+    this.io.emit(topics.gameInfo, { dealer: dealer.name, trump: game.trump });
+    this.sendStatusUpdate();
   };
   getCurrentGame = () => {
     return this.games[this.games.length - 1];

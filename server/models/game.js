@@ -10,7 +10,7 @@ class Game {
     this.nPlayers = Object.keys(players).length;
     this.leadPlayer = this.getPlayersInOrder()[0];
 
-    // Todo: fix hard-coded deal
+    // Todo: fix hard-coded dealer and friend cards
     this.leadPlayer.isDealer = true;
     this.leadPlayer.friendCards = [
       new Card("spade", "a"),
@@ -18,6 +18,7 @@ class Game {
       new Card("heart", "a"),
     ];
 
+    this.trump = null;
     this.deck = new Deck(nDecks);
     this.cardsPerPlayer = this.getCardsPerPlayer();
     this.cardsNotPlayed = this.deck.cards.length - nHoleCards;
@@ -76,6 +77,9 @@ class Game {
   playCards(clientId, cards) {
     this.getCurrentRound().playCards(cards);
     this.players[clientId].cardsPlayed = cards;
+  }
+  getDealer() {
+    return Object.values(this.players).find((p) => p.isDealer);
   }
 }
 
