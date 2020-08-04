@@ -2,6 +2,7 @@ const Game = require("./game");
 const Player = require("./player");
 const Message = require("./message");
 const { topics } = require("../websocket");
+const Auction = require("./auction");
 
 class Session {
   constructor(io) {
@@ -58,6 +59,30 @@ class Session {
     this.startBidding(game);
   };
   startBidding = (game) => {
+    // Todo: fix this hard-coded stuff
+    const firstBidder = Object.values(this.players).find((p) => p.order === 1);
+    const auction = new Auction(this.players, firstBidder);
+    auction.lowestBid = game.nDecks * 100;
+    let currentBidderId = auction.getCurrentBidderClientId();
+    console.log("bidder id:", currentBidderId);
+    this.sockets[currentBidderId].emit(topics.bid, {
+      lowestBid: auction.lowestBid,
+    });
+    this.sockets[currentBidderId].on(topics.bid, ({ playerId, offer }) => {
+      auction.bid(playerId, offer);
+      if (auction.isEnd()) {
+        this.endBidding(game);
+      } else {
+        auction.setNextBidder();
+        currentBidderId = auction.getCurrentBidderClientId();
+        this.sockets[currentBidderId].emit(topics.bid, {
+          lowestBid: auction.lowestBid,
+        });
+      }
+    });
+    // this.endBidding(game);
+  };
+  endBidding = (game) => {
     const dealer = game.getDealer();
     game.trump = "spade";
     this.io.emit(topics.gameInfo, { dealer: dealer.name, trump: game.trump });
