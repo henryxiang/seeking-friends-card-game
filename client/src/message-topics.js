@@ -6,6 +6,7 @@ const topics = {
   statusUpdate: "StatusUpdate",
   playCards: "PlayCards",
   gameInfo: "GameInfo",
+  bid: "Bid",
 };
 
 module.exports = { topics };

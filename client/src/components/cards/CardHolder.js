@@ -22,7 +22,7 @@ export class CardHolder extends Component {
   removeCard = (id) => {
     const { player, playerId } = this.state;
     console.log("remove card:", playerId, player);
-    if (player.id === playerId && !player.isPlaying) return;
+    if (!(player && player.id === playerId && player.isPlaying)) return;
     const cards = this.state.cards.filter((c) => c.id !== id);
     const removed = this.state.cards.filter((c) => c.id === id);
     const { cardsToPlay } = this.state;
@@ -60,9 +60,12 @@ export class CardHolder extends Component {
 
   componentDidMount() {
     const clientId = getClientId();
-    socket.on(clientId, ({ id, cards }) => {
-      console.log("cards dealt:", id, cards.length);
-      this.setState({ playerId: id, cards });
+    socket.on(clientId, ({ type, info }) => {
+      if (type === "deal") {
+        const { id, cards } = info;
+        console.log("cards dealt:", id, cards.length);
+        this.setState({ playerId: id, cards });
+      }
     });
     socket.on(topics.statusUpdate, (players) => {
       this.getLocalPlayer(players);

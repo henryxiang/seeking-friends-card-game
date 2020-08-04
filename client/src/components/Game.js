@@ -3,6 +3,7 @@ import Header from "./Header";
 import PlayingTable from "./game/PlayingTable";
 import CardHolder from "./cards/CardHolder";
 import ChatBox from "./game/ChatBox";
+import BiddingCard from "./game/BiddingCard";
 
 export class Game extends Component {
   render() {
@@ -20,6 +21,7 @@ export class Game extends Component {
         <PlayingTable />
         <CardHolder />
         <ChatBox />
+        <BiddingCard />
       </div>
     );
   }

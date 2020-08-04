@@ -1,6 +1,6 @@
 const Game = require("./game");
 const Player = require("./player");
-const Message = require("./message");
+const Card = require("./card");
 const { topics } = require("../websocket");
 
 class Session {
@@ -20,6 +20,7 @@ class Session {
       socket.on(topics.signIn, this.playerSignIn);
       socket.on(topics.start, this.startPlaying);
       socket.on(topics.playCards, this.playCards);
+      socket.on(topics.bid, this.processBids);
     });
   };
   playerSignIn = (msg) => {
@@ -62,9 +63,46 @@ class Session {
       type: "bidding",
       info: null,
     });
-    setTimeout(() => {
-      this.endBidding(game);
-    }, 5000);
+    const minBid = 80 * this.settings.nDecks;
+    game.auction.minBid = minBid;
+    game.auction.start();
+    console.log("auction:", game.auction);
+    const bidder = game.auction.getCurrentBidder();
+    const clientId = this.idMap[bidder.id];
+    console.log(clientId, bidder);
+    this.sockets[clientId].emit(clientId, {
+      type: "bid",
+      info: { playerId: bidder.id, minBid },
+    });
+  };
+  processBids = ({ playerId, bid }) => {
+    console.log("processing bid:", playerId, bid);
+    const game = this.getCurrentGame();
+    const { auction } = game;
+    auction.bid(playerId, bid);
+    this.sendStatusUpdate();
+    if (auction.isEnd()) {
+      auction.stop();
+      const dealer = auction.getAuctionWinner();
+      dealer.isDealer = true;
+      dealer.friendCards = [
+        new Card("spade", "a"),
+        new Card("spade", "a"),
+        new Card("heart", "a"),
+      ];
+      game.leadPlayer = dealer;
+      game.trump = "diamond";
+      setTimeout(() => {
+        this.endBidding(game);
+      }, 3000);
+    } else {
+      const bidder = auction.getNextBidder();
+      const clientId = this.idMap[bidder.id];
+      this.sockets[clientId].emit(clientId, {
+        type: "bid",
+        info: { playerId: bidder.id, minBid: auction.minBid },
+      });
+    }
   };
   endBidding = (game) => {
     const dealer = game.getDealer();
@@ -84,7 +122,10 @@ class Session {
       const { id } = players[clientId];
       const cards = this.getCurrentGame().dealCards();
       console.log("deal cards", clientId, cards.length);
-      this.sockets[clientId].emit(clientId, { id, cards });
+      this.sockets[clientId].emit(clientId, {
+        type: "deal",
+        info: { id, cards },
+      });
     }
   };
   playCards = ({ clientId, cards }) => {

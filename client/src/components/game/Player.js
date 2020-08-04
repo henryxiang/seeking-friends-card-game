@@ -28,7 +28,6 @@ export class Player extends Component {
       },
     };
     if (player.isPlaying) styles.player.border = "1px solid purple";
-    // if (player.isDealer) styles.player.fontSize = "120%";
     if (player.isFriend || player.isDealer)
       styles.label.display = "inline-block";
     return (
@@ -43,8 +42,8 @@ export class Player extends Component {
   }
 
   renderPlayerInfo = (player) => {
-    if (player.isBidding) {
-      return player.bid;
+    if (player.isBidding && player.bid) {
+      return `Bid: ${player.bid}`;
     } else if (player.isDealer) {
       return player.friendCards.map((c) => (
         <Card
@@ -56,7 +55,7 @@ export class Player extends Component {
         />
       ));
     } else if (player.score) {
-      return player.score;
+      return `Score: ${player.score}`;
     }
   };
 }

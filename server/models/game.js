@@ -1,6 +1,6 @@
 const Deck = require("./deck");
 const Round = require("./round");
-const Card = require("./card");
+const Auction = require("./auction");
 
 class Game {
   constructor(players, nDecks, nHoleCards = 8) {
@@ -9,21 +9,13 @@ class Game {
     this.nHoleCards = nHoleCards;
     this.nPlayers = Object.keys(players).length;
     this.leadPlayer = this.getPlayersInOrder()[0];
-
-    // Todo: fix hard-coded dealer and friend cards
-    this.leadPlayer.isDealer = true;
-    this.leadPlayer.friendCards = [
-      new Card("spade", "a"),
-      new Card("spade", "a"),
-      new Card("heart", "a"),
-    ];
-
     this.trump = null;
     this.deck = new Deck(nDecks);
     this.cardsPerPlayer = this.getCardsPerPlayer();
     this.cardsNotPlayed = this.deck.cards.length - nHoleCards;
     this.rounds = [];
     this.deck.shuffle();
+    this.auction = new Auction(players, this.leadPlayer);
     this.startNewRound();
     console.log("new game:", nDecks, nHoleCards, this.cardsPerPlayer);
   }
