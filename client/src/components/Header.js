@@ -35,24 +35,11 @@ const suitUnicode = {
   spade: 9828,
 };
 
-const GameInfo = ({ dealer, trump }) =>
-  !dealer || !trump ? (
-    <span>Game Not Started</span>
-  ) : (
-    <span>
-      {`${labels.header.dealer}: 
-        ${dealer}  |  
-        ${labels.header.trump}: 
-        ${String.fromCharCode(suitUnicode[trump])}`}
-    </span>
-  );
-
 class Header extends Component {
   state = {
     showSettings: false,
     isGameStarted: false,
-    dealer: null,
-    trump: null,
+    title: "Game Not Started",
   };
 
   showSettings = (event) => {
@@ -61,19 +48,27 @@ class Header extends Component {
   };
 
   componentDidMount() {
-    socket.on(topics.gameInfo, ({ dealer, trump }) => {
-      this.setState({ dealer, trump, showSettings: false });
+    socket.on(topics.gameInfo, ({ type, info }) => {
+      if (type === "start") {
+        const { dealer, trump } = info;
+        const title = `${labels.header.dealer}: 
+          ${dealer}  |  
+          ${labels.header.trump}: 
+          ${String.fromCharCode(suitUnicode[trump])}`;
+        this.setState({ title, showSettings: false });
+      } else if (type === "bidding") {
+        const title = "Bidding";
+        this.setState({ title, showSettings: false });
+      }
     });
   }
 
   render() {
-    const { dealer, trump } = this.state;
+    const { title } = this.state;
     return (
       <div style={styles.container}>
         <div style={styles.logo}></div>
-        <div style={styles.info}>
-          <GameInfo dealer={dealer} trump={trump} />
-        </div>
+        <div style={styles.info}>{title}</div>
         <div style={styles.control}>
           <i
             style={styles.button}

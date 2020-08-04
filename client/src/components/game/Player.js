@@ -37,22 +37,28 @@ export class Player extends Component {
           {player.name}
           <i style={styles.label} className="fa fa-flag-checkered" />
         </div>
-        <div style={styles.info}>
-          {player.isDealer
-            ? player.friendCards.map((c) => (
-                <Card
-                  key={c.id}
-                  position="static"
-                  size={0.25}
-                  suit={c.suit}
-                  rank={c.rank}
-                />
-              ))
-            : player.score}
-        </div>
+        <div style={styles.info}>{this.renderPlayerInfo(player)}</div>
       </div>
     );
   }
+
+  renderPlayerInfo = (player) => {
+    if (player.isBidding) {
+      return player.bid;
+    } else if (player.isDealer) {
+      return player.friendCards.map((c) => (
+        <Card
+          key={c.id}
+          position="static"
+          size={0.25}
+          suit={c.suit}
+          rank={c.rank}
+        />
+      ));
+    } else if (player.score) {
+      return player.score;
+    }
+  };
 }
 
 export default Player;

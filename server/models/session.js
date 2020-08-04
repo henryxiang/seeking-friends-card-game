@@ -58,9 +58,21 @@ class Session {
     this.startBidding(game);
   };
   startBidding = (game) => {
+    this.io.emit(topics.gameInfo, {
+      type: "bidding",
+      info: null,
+    });
+    setTimeout(() => {
+      this.endBidding(game);
+    }, 5000);
+  };
+  endBidding = (game) => {
     const dealer = game.getDealer();
     game.trump = "spade";
-    this.io.emit(topics.gameInfo, { dealer: dealer.name, trump: game.trump });
+    this.io.emit(topics.gameInfo, {
+      type: "start",
+      info: { dealer: dealer.name, trump: game.trump },
+    });
     this.sendStatusUpdate();
   };
   getCurrentGame = () => {

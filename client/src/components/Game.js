@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Header from "./Header";
 import PlayingTable from "./game/PlayingTable";
 import CardHolder from "./cards/CardHolder";
+import ChatBox from "./game/ChatBox";
 
 export class Game extends Component {
   render() {
@@ -18,6 +19,7 @@ export class Game extends Component {
         <Header />
         <PlayingTable />
         <CardHolder />
+        <ChatBox />
       </div>
     );
   }

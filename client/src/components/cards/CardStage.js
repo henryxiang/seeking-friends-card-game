@@ -9,6 +9,7 @@ const styles = {
     width: "50%",
     left: "25%",
     bottom: "200px",
+    zIndex: 1,
   },
 };
 
