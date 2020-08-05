@@ -7,6 +7,7 @@ const topics = {
   playCards: "PlayCards",
   gameInfo: "GameInfo",
   bid: "Bid",
+  chat: "Chat",
 };
 
 module.exports = { topics };

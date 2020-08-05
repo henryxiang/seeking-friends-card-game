@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Header from "./Header";
 import PlayingTable from "./game/PlayingTable";
 import CardHolder from "./cards/CardHolder";
-import ChatBox from "./game/ChatBox";
+import ChatBox from "./chat/ChatBox";
 import BiddingCard from "./game/BiddingCard";
 
 export class Game extends Component {

@@ -15,14 +15,13 @@ class App extends Component {
       timeElapse: 0,
     };
     subscribe(socket, topics.socketConnect, () => {
-      console.log("connected:", Date.now());
+      console.log("connected:", new Date().toString());
       this.setState({ connected: true });
     });
     subscribe(socket, topics.signIn, this.signIn);
   }
 
   signIn = (id) => {
-    console.log("sign in:", id);
     if (id === getClientId()) {
       this.setState({ signedIn: true });
       console.log(this.state);

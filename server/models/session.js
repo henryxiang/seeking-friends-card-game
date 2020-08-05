@@ -21,6 +21,7 @@ class Session {
       socket.on(topics.start, this.startPlaying);
       socket.on(topics.playCards, this.playCards);
       socket.on(topics.bid, this.processBids);
+      socket.on(topics.chat, this.sendChatMessage);
     });
   };
   playerSignIn = (msg) => {
@@ -35,6 +36,13 @@ class Session {
     }
     this.sockets[id].emit(topics.signIn, id);
     this.sendStatusUpdate();
+  };
+  sendChatMessage = ({ clientId, message }) => {
+    const player = this.players[clientId];
+    if (!player) return;
+    const { name } = player;
+    console.log("send message:", name, message);
+    this.io.emit(topics.chat, { name, message });
   };
   sendStatusUpdate = () => {
     console.log("status update:", this.players);
@@ -94,7 +102,7 @@ class Session {
       game.trump = "diamond";
       setTimeout(() => {
         this.endBidding(game);
-      }, 3000);
+      }, 2000);
     } else {
       const bidder = auction.getNextBidder();
       const clientId = this.idMap[bidder.id];

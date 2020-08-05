@@ -21,6 +21,7 @@ class Auction {
       player.isBidding = true;
       player.isPlaying = false;
       player.isDealer = false;
+      player.bid = "";
     }
   }
   stop() {
