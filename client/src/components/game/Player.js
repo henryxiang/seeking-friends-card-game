@@ -1,32 +1,11 @@
 import React, { Component } from "react";
 import Card from "../cards/Card";
+import defaultStyles from "./Player.styles";
 
 export class Player extends Component {
   render() {
     const { player } = this.props;
-    const styles = {
-      container: {},
-      player: {
-        height: "2em",
-        textAlign: "center",
-        marginTop: "5px",
-        padding: "0px 20px",
-        lineHeight: "2em",
-        fontSize: "100%",
-        fontWeight: "bold",
-      },
-      info: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "40px",
-      },
-      label: {
-        display: "none",
-        color: "red",
-        marginLeft: "5px",
-      },
-    };
+    const styles = defaultStyles;
     if (player.isPlaying) styles.player.border = "1px solid purple";
     if (player.isFriend || player.isDealer)
       styles.label.display = "inline-block";

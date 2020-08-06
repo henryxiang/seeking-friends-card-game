@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const images = require.context("./png", true);
 
-const Img = styled.img.attrs((props) => ({
+const CardImage = styled.img.attrs((props) => ({
   src: props.src,
   width: 100 * props.size,
 }))`
@@ -29,7 +29,7 @@ export class Card extends Component {
     } = this.props;
     const src = images(`./${suit}-${rank}.png`);
     return (
-      <Img
+      <CardImage
         src={src}
         x={x}
         y={y}

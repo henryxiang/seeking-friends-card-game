@@ -1,26 +1,10 @@
 import React, { Component } from "react";
 import socket, { topics } from "../../websocket";
 import PlayingTableLane from "./PlayingTableLane";
-
-const styles = {
-  container: {
-    border: "2px solid black",
-    backgroundColor: "palegreen",
-    display: "flex",
-    justifyContent: "space-around",
-    flexGrow: 1,
-  },
-};
-
+import styles from "./PlayingTable.styles";
 class PlayingTable extends Component {
   state = {
     players: [],
-  };
-
-  componentDidMount = () => {
-    socket.on(topics.statusUpdate, (players) => {
-      this.setState({ players });
-    });
   };
 
   render() {
@@ -34,6 +18,10 @@ class PlayingTable extends Component {
       </div>
     );
   }
+  componentDidMount = () => {
+    socket.on(topics.statusUpdate, (players) => {
+      this.setState({ players });
+    });
+  };
 }
-
 export default PlayingTable;

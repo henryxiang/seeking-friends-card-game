@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Card from "../cards/Card";
 import Player from "./Player";
+import styles from "./PlayingTableLane.styles";
 
 const h = {
   header: 30,
@@ -8,39 +9,15 @@ const h = {
   spacing: 150,
 };
 export class PlayingTableLane extends Component {
-  styles = {
-    container: {
-      display: "flex",
-      flexDirection: "column",
-    },
-    cards: {
-      flexGrow: 1,
-      display: "flex",
-      flexDirection: "column",
-      flexWrap: "wrap",
-      alignContent: "center",
-      marginTop: "30px",
-    },
-  };
   state = {
     height: window.innerHeight - h.header - h.footer - h.spacing,
   };
-  updateHeight = () => {
-    const otherHeight = h.header + h.footer + h.spacing;
-    this.setState({ height: window.innerHeight - otherHeight });
-  };
-  componentDidMount() {
-    window.addEventListener("resize", this.updateHeight);
-  }
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateHeight);
-  }
   render() {
     const { player, cards } = this.props;
     return (
-      <div style={this.styles.container}>
+      <div style={styles.container}>
         <Player player={player} />
-        <div style={{ ...this.styles.cards, height: `${this.state.height}px` }}>
+        <div style={{ ...styles.cards, height: `${this.state.height}px` }}>
           {cards
             .sort((a, b) => b.value - a.value)
             .map((c, i) => (
@@ -55,6 +32,16 @@ export class PlayingTableLane extends Component {
         </div>
       </div>
     );
+  }
+  updateHeight = () => {
+    const otherHeight = h.header + h.footer + h.spacing;
+    this.setState({ height: window.innerHeight - otherHeight });
+  };
+  componentDidMount() {
+    window.addEventListener("resize", this.updateHeight);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateHeight);
   }
 }
 

@@ -10,6 +10,7 @@
     "dev": "npm-run-all -p dev:*",
     "dev:client": "node scripts/dev-client.js",
     "dev:server": "node scripts/dev-server.js",
+    "build": "node scripts/build.js",
     "clean": "rm -rf {server,client}/node_modules client/build"
   },
   "repository": {
@@ -25,5 +26,8 @@
   "homepage": "https://github.com/henryxiang/seeking-friends-card-game#readme",
   "devDependencies": {
     "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {
+    "fs-extra": "^9.0.1"
   }
 }

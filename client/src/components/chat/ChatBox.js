@@ -19,6 +19,7 @@ export class ChatBox extends Component {
     show: false,
   };
   inputRef = createRef();
+  endRef = createRef();
 
   render() {
     const { show } = this.state;
@@ -31,6 +32,7 @@ export class ChatBox extends Component {
           {this.state.messages.map((msg, i) => (
             <ChatMessage key={i} msg={msg} />
           ))}
+          <div ref={this.endRef}></div>
         </MessageList>
         <Form show={show} onSubmit={this.sendMessage}>
           <Input
@@ -63,6 +65,7 @@ export class ChatBox extends Component {
     if (messages.length > maxMessages)
       messages = messages.slice(messages.length - maxMessages, messages.length);
     this.setState({ messages });
+    this.endRef.current.scrollIntoView();
   };
   componentDidMount() {
     if (this.state.show) this.inputRef.current.focus();
