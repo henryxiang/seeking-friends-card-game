@@ -15,6 +15,7 @@ class Game {
     this.cardsNotPlayed = this.deck.cards.length - nHoleCards;
     this.rounds = [];
     this.deck.shuffle();
+    this.holeCards = this.deck.dealCards(nHoleCards);
     this.auction = new Auction(players, this.leadPlayer);
     this.startNewRound();
     console.log("new game:", nDecks, nHoleCards, this.cardsPerPlayer);

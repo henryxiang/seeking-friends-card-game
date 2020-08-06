@@ -68,7 +68,12 @@ class Auction {
     }
   }
   isEnd() {
-    console.log("is end?", this.minBid, this.quits);
+    console.log(
+      "is auction end?",
+      this.minBid,
+      this.quits,
+      this.bidders.length
+    );
     return this.minBid < 0 || this.quits === this.bidders.length - 1;
   }
   getAuctionWinner() {

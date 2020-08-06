@@ -1,11 +1,12 @@
 import React, { Component } from "react";
+import _ from "lodash";
 import Card from "../cards/Card";
 import defaultStyles from "./Player.styles";
 
 export class Player extends Component {
   render() {
     const { player } = this.props;
-    const styles = defaultStyles;
+    const styles = _.cloneDeep(defaultStyles);
     if (player.isPlaying) styles.player.border = "1px solid purple";
     if (player.isFriend || player.isDealer)
       styles.label.display = "inline-block";

@@ -8,6 +8,7 @@ export default {
     lineHeight: "2em",
     fontSize: "100%",
     fontWeight: "bold",
+    border: "none",
   },
   info: {
     display: "flex",

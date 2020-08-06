@@ -64,7 +64,7 @@ export class ChatBox extends Component {
     messages.push(msg);
     if (messages.length > maxMessages)
       messages = messages.slice(messages.length - maxMessages, messages.length);
-    this.setState({ messages });
+    this.setState({ show: true, messages });
     this.endRef.current.scrollIntoView();
   };
   componentDidMount() {

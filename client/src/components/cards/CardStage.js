@@ -24,7 +24,7 @@ const Undo = styled.button`
 
 export class CardStage extends Component {
   render() {
-    const { cards, undo, play } = this.props;
+    const { cards, undo, play, label } = this.props;
     if (cards.length == 0) return null;
     return (
       <View>
@@ -39,8 +39,8 @@ export class CardStage extends Component {
               rank={c.rank}
             />
           ))}
-        <Play onClick={play}>Play</Play>
-        <Undo onClick={undo}>Undo</Undo>
+        <Play onClick={play}>{label.play}</Play>
+        <Undo onClick={undo}>{label.undo}</Undo>
       </View>
     );
   }

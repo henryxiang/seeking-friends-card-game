@@ -11,15 +11,14 @@ export class CardHolder extends Component {
     leadingCards: [],
     cards: [],
     cardsToPlay: [],
+    isSwapping: false,
     width: window.innerWidth,
     height: window.innerHeight,
   };
-
   updateDimensions = () => {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
   };
-
-  removeCard = (id) => {
+  pickCard = (id) => {
     const { player, playerId } = this.state;
     if (!(player && player.id === playerId && player.isPlaying)) return;
     const cards = this.state.cards.filter((c) => c.id !== id);
@@ -28,25 +27,36 @@ export class CardHolder extends Component {
     cardsToPlay.push(removed[0]);
     this.setState({ cards, cardsToPlay });
   };
-
   play = () => {
+    if (this.state.isSwapping) {
+      this.swapHoleCards();
+      return;
+    }
     socket.emit(topics.playCards, {
       clientId: getClientId(),
       cards: this.state.cardsToPlay,
     });
     this.setState({ cardsToPlay: [] });
   };
-
   undo = () => {
     const cards = [...this.state.cards, ...this.state.cardsToPlay];
     this.setState({ cards, cardsToPlay: [] });
   };
-
+  swapHoleCards = () => {
+    const clientId = getClientId();
+    socket.emit(clientId, {
+      type: "swapHoleCards",
+      content: this.state.cardsToPlay,
+    });
+    socket.emit(clientId, {
+      type: "startGame",
+    });
+    this.setState({ cardsToPlay: [], isSwapping: false });
+  };
   getLocalPlayer = (players) => {
     const player = players.find((p) => p.id === this.state.playerId);
     this.setState({ player });
   };
-
   getLeadingCards = (players) => {
     const player = players.find((p) => p.cardsPlayed.length !== 0);
     if (this.state.leadingCards.length === 0 && player) {
@@ -55,13 +65,19 @@ export class CardHolder extends Component {
       this.setState({ leadingCards: [] });
     }
   };
-
   componentDidMount() {
     const clientId = getClientId();
     socket.on(clientId, ({ type, info }) => {
       if (type === "deal") {
         const { id, cards } = info;
+        console.log("deal:", cards);
         this.setState({ playerId: id, cards });
+      } else if (type === "holdCard") {
+        const { holeCards } = info;
+        console.log("holeCards:", holeCards);
+        let { cards } = this.state;
+        cards = [...cards, ...holeCards];
+        this.setState({ cards, isSwapping: true });
       }
     });
     socket.on(topics.statusUpdate, (players) => {
@@ -70,13 +86,16 @@ export class CardHolder extends Component {
     });
     window.addEventListener("resize", this.updateDimensions);
   }
-
   componentWillUnmount() {
     window.removeEventListener("resize", this.updateDimensions);
   }
-
   render() {
-    const { cards, width } = this.state;
+    const { cards, width, isSwapping } = this.state;
+    const label = {
+      play: "Play",
+      undo: "Undo",
+    };
+    if (isSwapping) label.play = "Swap";
     const d = 18 * cardSize;
     const length = 100 * cardSize + d * (cards.length - 1);
     const space = (width - length) / 2;
@@ -94,6 +113,7 @@ export class CardHolder extends Component {
           cards={this.state.cardsToPlay}
           play={this.play}
           undo={this.undo}
+          label={label}
         />
         {cards
           .sort((a, b) => b.value - a.value)
@@ -106,7 +126,7 @@ export class CardHolder extends Component {
               x={space + d * i}
               y={30}
               size={cardSize}
-              onClick={this.removeCard}
+              onClick={this.pickCard}
             />
           ))}
       </div>

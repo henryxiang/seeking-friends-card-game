@@ -15,14 +15,46 @@ class Session {
   }
   initEventListeners = () => {
     this.io.on("connection", (socket) => {
-      const id = socket.handshake.query.id;
-      this.sockets[id] = socket;
+      const clientId = socket.handshake.query.id;
+      this.sockets[clientId] = socket;
+      socket.on(clientId, this.handleClientMessage);
       socket.on(topics.signIn, this.playerSignIn);
       socket.on(topics.start, this.startPlaying);
       socket.on(topics.playCards, this.playCards);
       socket.on(topics.bid, this.processBids);
       socket.on(topics.chat, this.sendChatMessage);
     });
+  };
+  handleClientMessage = (msg) => {
+    const { type, content } = msg;
+    switch (type) {
+      case "swapHoleCards":
+        this.swapHoleCards(content);
+        break;
+      case "friends":
+        this.chooseFriends(content);
+        break;
+      case "trump":
+        this.chooseTrump(content);
+        break;
+      case "startGame":
+        this.endDealerPrep(this.getCurrentGame());
+        break;
+    }
+  };
+  swapHoleCards = (holeCards) => {
+    console.log("swap hole cards:", holeCards);
+    this.getCurrentGame().holeCards = holeCards;
+  };
+  chooseFriends = (cards) => {
+    console.log("friend cards", cards);
+    const dealer = this.getCurrentGame().getDealer();
+    const friendCards = cards.map((c) => new Card(c.suit, c.rank));
+    dealer.friendCards = friendCards;
+  };
+  chooseTrump = (suit) => {
+    console.log("chosen trump:", suit);
+    this.getCurrentGame().trump = suit;
   };
   playerSignIn = (msg) => {
     const { id, name } = msg;
@@ -38,9 +70,12 @@ class Session {
     this.sendStatusUpdate();
   };
   sendChatMessage = ({ clientId, message }) => {
-    const player = this.players[clientId];
-    if (!player) return;
-    const { name } = player;
+    let name = "Game";
+    if (clientId) {
+      const player = this.players[clientId];
+      if (!player) return;
+      name = player.name;
+    }
     console.log("send message:", name, message);
     this.io.emit(topics.chat, { name, message });
   };
@@ -93,16 +128,8 @@ class Session {
       auction.stop();
       const dealer = auction.getAuctionWinner();
       dealer.isDealer = true;
-      dealer.friendCards = [
-        new Card("spade", "a"),
-        new Card("spade", "a"),
-        new Card("heart", "a"),
-      ];
       game.leadPlayer = dealer;
-      game.trump = "diamond";
-      setTimeout(() => {
-        this.endBidding(game);
-      }, 2000);
+      this.endBidding(game);
     } else {
       const bidder = auction.getNextBidder();
       const clientId = this.idMap[bidder.id];
@@ -114,11 +141,33 @@ class Session {
   };
   endBidding = (game) => {
     const dealer = game.getDealer();
-    game.trump = "spade";
+    this.sendChatMessage({
+      clientId: 0,
+      message: `${dealer.name} won the auction.`,
+    });
+    // this.sendStatusUpdate();
+    this.startDealerPrep(game);
+  };
+  startDealerPrep = (game) => {
+    const dealer = game.getDealer();
+    this.setPlayer(dealer);
+    this.dealHoleCards(game);
+    this.sendStatusUpdate();
+  };
+  endDealerPrep = (game) => {
+    const dealer = game.getDealer();
+    // game.trump = "spade";
     this.io.emit(topics.gameInfo, {
       type: "start",
       info: { dealer: dealer.name, trump: game.trump },
     });
+    this.sendChatMessage({
+      clientId: 0,
+      message: "Dealer is ready. Let's play.",
+    });
+    game.leadPlayer = dealer;
+    this.setPlayer(dealer);
+    game.startNewRound();
     this.sendStatusUpdate();
   };
   getCurrentGame = () => {
@@ -136,6 +185,16 @@ class Session {
       });
     }
   };
+  dealHoleCards = (game) => {
+    const dealer = game.getDealer();
+    const clientId = this.idMap[dealer.id];
+    const holeCards = game.holeCards;
+    console.log("hole cards", clientId, holeCards);
+    this.sockets[clientId].emit(clientId, {
+      type: "holdCard",
+      info: { id: dealer.id, holeCards },
+    });
+  };
   playCards = ({ clientId, cards }) => {
     this.getCurrentGame().playCards(clientId, cards);
     // this.players[clientId].cardsPlayed = cards;
@@ -145,6 +204,12 @@ class Session {
         this.getCurrentGame().startNewRound();
         this.sendStatusUpdate();
       }, 2000);
+    }
+  };
+  setPlayer = (player) => {
+    for (const p of Object.values(this.players)) {
+      if (p.id === player.id) p.isPlaying = true;
+      else p.isPlaying = false;
     }
   };
 }

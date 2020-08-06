@@ -14,6 +14,6 @@ cmd.on("error", (error) => console.error(error));
 // Copy built artifacts to server's public directory
 const artifactDir = path.join(clientDir, "build");
 const publicDir = path.join(serverDir, "public");
-const backupDir = path.join(serverDir, "public.bak");
+const backupDir = path.join(serverDir, `public-${Date.now()}`);
 fs.moveSync(publicDir, backupDir);
 fs.copySync(artifactDir, publicDir);
