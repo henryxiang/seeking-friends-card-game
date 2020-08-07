@@ -17,7 +17,7 @@ class Game {
     this.deck.shuffle();
     this.holeCards = this.deck.dealCards(nHoleCards);
     this.auction = new Auction(players, this.leadPlayer);
-    this.startNewRound();
+    // this.startNewRound();
     console.log("new game:", nDecks, nHoleCards, this.cardsPerPlayer);
   }
   getCardsPerPlayer() {
@@ -38,11 +38,12 @@ class Game {
   }
   startNewRound() {
     this.clearPlayerCards();
-    if (this.rounds.length > 0) {
-      this.leadPlayer = this.getCurrentRoundWinner();
-    }
-    console.log("start new round:", this.leadPlayer);
-    const round = new Round(this.players, this.leadPlayer);
+    const leadPlayer =
+      this.rounds.length === 0
+        ? this.getDealer()
+        : this.getCurrentRoundWinner();
+    console.log("start new round:", leadPlayer);
+    const round = new Round(this.players, leadPlayer);
     this.rounds.push(round);
   }
   getCurrentRound() {

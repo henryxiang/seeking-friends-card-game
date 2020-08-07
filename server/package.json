@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "debug": "cross-env NODE_ENV=development DEBUG=* node server.js",
-    "dev": "cross-env NODE_ENV=development nodemon server.js",
+    "dev": "cross-env NODE_ENV=development nodemon --inspect server.js",
     "watch": "nodemon server.js"
   },
   "keywords": [],

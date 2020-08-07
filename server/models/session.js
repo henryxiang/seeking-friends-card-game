@@ -156,17 +156,15 @@ class Session {
   };
   endDealerPrep = (game) => {
     const dealer = game.getDealer();
-    // game.trump = "spade";
     this.io.emit(topics.gameInfo, {
       type: "start",
       info: { dealer: dealer.name, trump: game.trump },
     });
     this.sendChatMessage({
       clientId: 0,
-      message: "Dealer is ready. Let's play.",
+      message: `${dealer.name} is ready. Let's play.`,
     });
-    game.leadPlayer = dealer;
-    this.setPlayer(dealer);
+    // game.leadPlayer = dealer;
     game.startNewRound();
     this.sendStatusUpdate();
   };

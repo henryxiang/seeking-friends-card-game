@@ -14,6 +14,7 @@ class Round {
     this.cardsPlayed = [];
     this.pIndex = 0;
     this.setNextPlayer();
+    console.log("new round:", leadPlayer, this.playersQueue, this.pIndex);
   }
   setLeadPlayer(player) {
     while (this.playersQueue[0] !== player.id)
